@@ -19,5 +19,5 @@
   "fusion_layer": 6,
   "encoder_width": 768,
   "autoregressive": 0,
-  "add_cross_attention": "True"
+  "add_cross_attention": true
 }

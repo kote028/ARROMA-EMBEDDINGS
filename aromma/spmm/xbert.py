@@ -53,10 +53,72 @@ from transformers.modeling_outputs import (
 )
 from transformers.modeling_utils import (
     PreTrainedModel,
-    apply_chunking_to_forward,
-    find_pruneable_heads_and_indices,
-    prune_linear_layer,
 )
+
+# Compatibility shims for newer transformers versions
+try:
+    from transformers.modeling_utils import prune_linear_layer  # type: ignore
+except ImportError:  # pragma: no cover
+    from transformers.pytorch_utils import prune_linear_layer  # type: ignore
+
+try:
+    from transformers.modeling_utils import apply_chunking_to_forward  # type: ignore
+except ImportError:  # pragma: no cover
+    from transformers.pytorch_utils import apply_chunking_to_forward  # type: ignore
+
+try:
+    from transformers.modeling_utils import find_pruneable_heads_and_indices  # type: ignore
+except ImportError:
+    try:
+        from transformers.pytorch_utils import find_pruneable_heads_and_indices  # type: ignore
+    except ImportError:  # pragma: no cover
+        # Minimal fallback shim – returns empty indices (no pruning needed for inference).
+        from typing import List, Set, Tuple
+        import torch
+
+        def find_pruneable_heads_and_indices(
+            heads: List[int], n_heads: int, head_size: int, already_pruned_heads: Set[int]
+        ) -> Tuple[Set[int], torch.LongTensor]:
+            """Fallback for newer transformers where this helper was removed.
+            The Aromma model does not prune heads during inference, so returning the
+            original set and an empty index tensor is sufficient.
+            """
+            return already_pruned_heads, torch.tensor([], dtype=torch.long)
+
+
+# `apply_chunking_to_forward` moved to `transformers.pytorch_utils` in newer versions.
+# `find_pruneable_heads_and_indices` also moved/removed; we provide fallbacks.
+try:
+    from transformers.modeling_utils import apply_chunking_to_forward  # type: ignore
+except ImportError:  # pragma: no cover
+    from transformers.pytorch_utils import apply_chunking_to_forward  # type: ignore
+
+try:
+    from transformers.modeling_utils import find_pruneable_heads_and_indices  # type: ignore
+except ImportError:
+    try:
+        from transformers.pytorch_utils import find_pruneable_heads_and_indices  # type: ignore
+    except ImportError:  # pragma: no cover
+        # Minimal fallback shim – returns empty indices (no pruning needed for inference).
+        from typing import List, Set, Tuple
+        import torch
+
+        def find_pruneable_heads_and_indices(
+            heads: List[int], n_heads: int, head_size: int, already_pruned_heads: Set[int]
+        ) -> Tuple[Set[int], torch.LongTensor]:
+            """Fallback for newer transformers where this helper was removed.
+            The Aromma model does not prune heads during inference, so returning the
+            original set and an empty index tensor is sufficient.
+            """
+            return already_pruned_heads, torch.tensor([], dtype=torch.long)
+
+
+# `apply_chunking_to_forward` moved to `transformers.pytorch_utils` in newer versions.
+# Try to import from the old location; if that fails, import from the new module.
+try:
+    from transformers.modeling_utils import apply_chunking_to_forward  # type: ignore
+except ImportError:  # pragma: no cover
+    from transformers.pytorch_utils import apply_chunking_to_forward  # type: ignore
 from transformers.utils import logging
 from transformers.models.bert.configuration_bert import BertConfig
 
