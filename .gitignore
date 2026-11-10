@@ -1,0 +1,28 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Checkpoints / Large binaries (>100MB)
+aromma/aromma_best_fold.pt
+*.pt
+*.bin
+*.tar.gz
+
+# Streamlit run metadata
+.streamlit/secrets.toml
+
+# IDE & OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
