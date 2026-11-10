@@ -57,7 +57,7 @@ class Fragent:
         return self.rephrase_chain.run({"question": question, "agent_ans": agent_ans})
 
 if __name__ == "__main__":
-    agent = Fragent(model="llama3")
+    agent = Fragent(model="llama3:8b")
 
     task1_a = agent.run("How does the molecule CCC1=C(O)C(=O)CC1 smell like?")
     task1_b = agent.run("How does the mixture blend with CC(C)COC(=O)Cc1ccccc1 and CCCCCOC(=O)Cc1ccccc1 smell like?")
